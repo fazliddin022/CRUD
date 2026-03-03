@@ -3,12 +3,16 @@ const PATH = {
     login:"/login",
     stacks:"/stacks",
     stacksCreate:"/stacks/create",
-    stacksMore:"/stacks/:id",
-    stacksUpdate:"/stacks/:id/update",
+    stacksMore:"/stacks/:stackId",
+    stacksUpdate:"/stacks/:stackId/update",
+    stacksCreateByGroup:"/stacks/:stackId/create",
     teachers:"/teachers",
     students:"/students",
     groups:"/groups",
-    rooms:"/rooms"
+    groupsCreate:"/groups/create",
+    groupsMore:"/groups/:groupId",
+    groupsUpdate:"/groups/:groupId/update",
+    rooms:"/rooms",
 }
 
 export default PATH

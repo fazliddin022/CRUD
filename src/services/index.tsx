@@ -1,7 +1,7 @@
-import { QueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { instance } from "../hooks";
-import toast from "react-hot-toast";
-import type { NavigateFunction } from "react-router-dom";
+import { QueryClient, useMutation, useQuery } from "@tanstack/react-query"
+import { instance } from "../hooks"
+import toast from "react-hot-toast"
+import type { NavigateFunction } from "react-router-dom"
 
 export const GetAll = (filerProp: any[], URL: string, token: string, QueryPathname: string, params?: any) => {
     const data = useQuery<any[]>({
@@ -33,7 +33,6 @@ export const Delete = (URL: string, token: string, id: string | undefined, navig
     })
     return data
 }
-
 export const Create = (URL: string, token: string, navigate: NavigateFunction, queryClient: QueryClient, QueryPathname: string) => {
     const data = useMutation({
         mutationFn: (body: any) => instance(token).post(URL, body),

@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom"
 import { PATH } from "../components"
-import { DashboardHome, Groups, Rooms, StackCrud, StackMore, Stacks, Students, Teachers } from "../pages"
+import { DashboardHome, GroupMore, Groups, GroupsCrud, Rooms, StackCrud, StackMore, Stacks, Students, Teachers } from "../pages"
 import { Header, Sitebar } from "../modules"
 import { useContext } from "react"
 import { Context } from "../context/Context"
@@ -18,6 +18,10 @@ const {collapsed} = useContext(Context)
         {id:7, path:PATH.teachers, element:<Teachers/>},
         {id:8, path:PATH.students, element:<Students/>},
         {id:9, path:PATH.rooms, element:<Rooms/>},
+        {id:10, path: PATH.groupsCreate, element: <GroupsCrud/> },
+        {id: 11, path: PATH.stacksCreateByGroup, element: <GroupsCrud /> },
+        {id: 12, path: PATH.groupsMore, element: <GroupMore /> },
+        {id: 13, path: PATH.groupsUpdate, element: <GroupsCrud /> },
     ]
 return(
     <div className="flex">
