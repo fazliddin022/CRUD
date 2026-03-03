@@ -1,38 +1,42 @@
 import { SaveOutlined } from "@ant-design/icons"
 import { Button, Input } from "antd"
 import TextArea from "antd/es/input/TextArea"
-import { use, useState, type SubmitEvent } from "react"
+import { useEffect, useState, type SubmitEvent } from "react"
 import { useCookies } from "react-cookie"
 import { useNavigate, useParams } from "react-router-dom"
-import { instance } from "../../../hooks"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import toast from "react-hot-toast"
+import { useQueryClient } from "@tanstack/react-query"
+import { Create, GetById, Update } from "../../../services"
+import { QueryPATH } from "../../../components"
 
 const StackCrud = () => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [cookies] = useCookies(['token'])
   const {id} = useParams()
+
+
   const [name, setName] = useState<string>("")
   const [description, setDescription] = useState<string>("")
-  
-  const {mutate:stackCreate, isPending} = useMutation({
-    mutationFn:(body:{name:string, description:string}) => instance(cookies.token).post("/stacks", body),
-    onSuccess:() => {
-      toast.success("Succesfully created!")
-      setTimeout(() => {
-        navigate(-1)
-        queryClient.invalidateQueries({queryKey:['stacks']})
-      }, 1000)
-    },
-    onError:(err) => toast.error(err.message)
-  })
+  // Create Logikasi  
+  const {mutate:stackCreate, isPending} = Create("/stacks", cookies.token, navigate, queryClient, QueryPATH.stacks)
+  // Update Logikasi 
+  const {mutate:stackUpdate} = Update("/stacks", cookies.token, id, navigate, queryClient, QueryPATH.stacks, QueryPATH.stacksMore)
 
+  // Create and Update Logic
   function handleSubmit(e:SubmitEvent<HTMLFormElement>){
     e.preventDefault()
     const data = {name, description}
-    stackCreate(data)
+    id ? stackUpdate(data) : stackCreate(data)
   }
+
+  // Get For Update Single info
+  const { data:singleInfo = {} } = id ? GetById("stacks-more", id, cookies.token, "stacks") : {}
+  useEffect(() => {
+    if(singleInfo && id){
+      setName(singleInfo.name)
+      setDescription(singleInfo.description)
+    }
+  },[singleInfo])
   
   return (
     <form onSubmit={handleSubmit} autoComplete="off" className="p-5">

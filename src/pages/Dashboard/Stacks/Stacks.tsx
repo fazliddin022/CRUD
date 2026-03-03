@@ -1,28 +1,21 @@
 import { MoreOutlined, PlusCircleOutlined } from "@ant-design/icons";
-import Caption from "../../../components/Caption";
 import { Button, Card, Input } from "antd";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { debounce, instance } from "../../../hooks";
+import { debounce } from "../../../hooks";
 import { useCookies } from "react-cookie";
-import type { Stacktype } from "../../../@types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { GetAll } from "../../../services";
+import { Caption, QueryPATH } from "../../../components";
 
 const Stacks = () => {
   const navigate = useNavigate()
   const [cookies] = useCookies(["token"]);
-  const queryClient = useQueryClient()
   // Search
   const [search, setSearch] = useState<string>("")
   const name = debounce(search, 500)
 
   // Get All Stacks
-  const { data: stacks = [], isLoading } = useQuery<Stacktype[]>({
-    queryKey: ["stacks", name],
-    queryFn: () => instance(cookies.token).get("/stacks", {
-          params:{name}
-        }).then((res) => res.data.data),
-  }); 
+  const { data: stacks = [], isLoading } = GetAll([name], "/stacks", cookies.token, QueryPATH.stacks, {name})
   return (
     <div className="p-5">
       <Caption title="Stacks" count={stacks.length} icon={<PlusCircleOutlined />} />

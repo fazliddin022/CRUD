@@ -4,27 +4,66 @@ import {
   EditFilled,
   PlusCircleOutlined,
 } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import { Button, Input, Select } from "antd";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button, Input, Modal,  } from "antd";
 import { useCookies } from "react-cookie";
 import { useNavigate, useParams } from "react-router-dom";
-import { instance } from "../../../hooks";
-import { FormatDate } from "../../../components";
-import CustomSelect from "../../../components/CustomSelect";
+import { CustomSelect, CustomTable, FormatDate, QueryPATH } from "../../../components";
+import { useEffect, useState } from "react";
+import { Delete, GetAll, GetById } from "../../../services";
 
 const StackMore = () => {
   const { id } = useParams();
-  const [cookies] = useCookies(["token"]);
   const navigate = useNavigate();
+  const [cookies] = useCookies(["token"]);
+  const queryClient = useQueryClient()
 
-  const { data = {}, isLoading } = useQuery({
-    queryKey: ["stacks-more"],
-    queryFn: () =>
-      instance(cookies.token)
-        .get(`/stacks/${id}`)
-        .then((res) => res.data.data),
-  });
+  const [deleteModal, setDeleteModal] = useState<boolean>(false)
+  // Get Single Data 
+  const { data = {}, isLoading } = GetById(QueryPATH.stacksMore, id , cookies.token, "/stacks") 
 
+  // Delete part
+  const {mutate:StackDelete, isPending} = Delete("/stacks", cookies.token, id, navigate, QueryPATH.stacks, queryClient)
+
+  // Stack by group part
+  const columns = [
+    {
+      title: 'ID',
+      dateIndex: 'id'
+    },
+    {
+      title: 'Name',
+      dateIndex: 'name'
+    },
+    {
+      title: 'Stacks name',
+      dateIndex: 'stackName'
+    },
+    {
+      title: 'Teacher name',
+      dateIndex: 'teacherName'
+    },
+    {
+      title: 'Status',
+      dateIndex: 'status'
+    },
+    {
+      title: 'Actions',
+      dateIndex: 'actions'
+    },
+  ]
+  const {data:stackByGroups = [], isLoading:groupsLoading} = GetAll([id], "/groups", cookies.token, QueryPATH.groups, {stackId:id})
+  // const [groups, setGroups] = useState<any>([])
+  // useEffect(() => {
+  //   if(stackByGroups){
+  //     setGroups(stackByGroups.map((item) => {
+  //       item.stackName = item.stack.name
+  //       item.teacherName = `${item.teacher.firstName} ${item.teacher.lastName}`
+  //       return item
+  //     }))
+  //   }
+  // },[stackByGroups])
+  
   return (
     <div className="p-5">
       <div className="flex items-center justify-between">
@@ -40,13 +79,8 @@ const StackMore = () => {
           </h1>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            size="large"
-            className="bg-red-500!"
-            type="primary"
-            icon={<DeleteFilled />}
-          ></Button>
-          <Button size="large" type="primary" icon={<EditFilled />}>
+          <Button onClick={() => setDeleteModal(true)} size="large" className="bg-red-500!" type="primary" icon={<DeleteFilled />}></Button>
+          <Button onClick={() => navigate('update')} size="large" type="primary" icon={<EditFilled />}>
             Update
           </Button>
         </div>
@@ -77,9 +111,12 @@ const StackMore = () => {
           </li>
         </ul>
       </div>
+      <Modal confirmLoading={isPending} onOk={() => StackDelete()} open={deleteModal} onCancel={() => setDeleteModal(false)} title="Do you want to delete!"></Modal>
+
+      {/* Stack by groups */}
       <div className="bg-slate-200 p-5 rounded-md mt-10">
         <h2 className="text-[20px] font-bold mb-2">{data.name} / groups</h2>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-5">
           <div className="flex gap-3">
             <Input className="w-70!" size="large" allowClear placeholder="Search group by name"/>
             <CustomSelect id={id} requestTitle="/teachers" />
@@ -88,6 +125,7 @@ const StackMore = () => {
             Create Group
           </Button>
         </div>
+        <CustomTable loading={groupsLoading} columns={columns} data={[]}/>
       </div>
     </div>
   );
