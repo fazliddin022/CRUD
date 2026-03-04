@@ -11,8 +11,13 @@ import Stacks from "./Dashboard/Stacks/Stacks"
 import StackMore from "./Dashboard/Stacks/StackMore"
 import StackCrud from "./Dashboard/Stacks/StackCrud"
 
-import Rooms from "./Dashboard/Rooms"
-import Students from "./Dashboard/Students"
-import Teachers from "./Dashboard/Teachers"
+import Teachers from "./Dashboard/Teachers/Teachers"
+import TeacherMore from "./Dashboard/Teachers/TeacherMore"
+import TeacherCrud from "./Dashboard/Teachers/TeacherCrud"
 
-export {LoginHome, GroupMore,Login, DashboardHome, Groups, Stacks, Rooms, Students, Teachers, StackCrud, StackMore, GroupsCrud}
+import Students from "./Dashboard/Students/Students"
+import StudentMore from "./Dashboard/Students/StudentMore"
+import StudentCrud from "./Dashboard/Students/StudentCrud"
+
+import Rooms from "./Dashboard/Rooms"
+export { LoginHome, Login, DashboardHome, Groups, GroupsCrud, GroupMore, Stacks, StackMore, StackCrud, Teachers, TeacherMore, TeacherCrud, Students, StudentMore, StudentCrud, Rooms }
